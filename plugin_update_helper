@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2021.07.29
+# Plugin-Update-Helper version: 2021.07.30
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -17,12 +17,12 @@ if [ ! -f /boot/changes.txt ]; then
   /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Error: Plugin Update Helper can't start! Can't find file /boot/changes.txt" -i "alert"
   exit 1
 fi
-while inotifywait -q /boot/changes.txt -e move_self,delete_self >/dev/null 2>&1
+while inotifywait -q /boot/changes.txt -e move_self,delete_self,modify >/dev/null 2>&1
 do
   # Set Variables
   sleep 2
   CUR_KERNEL_V="$(uname -r)"
-  NEW_KERNEL_V="$(grep -E -A2 "Linux kernel" /boot/changes.txt | grep -E "version" | awk '{print $3}')-Unraid"
+  NEW_KERNEL_V="$(grep -E -A2 "Linux kernel" /boot/changes.txt | grep -E "version" | awk '{print $3}' | sort -V | tail -1)-Unraid"
   NEW_UNRAID_V="$(head -2 /boot/changes.txt | grep -E "Version" | awk '{print $3}')"
 
   # Check if Kernel version changed, notify user if so
