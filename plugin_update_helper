@@ -294,9 +294,11 @@ do
 
     if [ "${DL_URL}" != "empty" ]; then
       if wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}" "${DL_URL}/${FILENAME}" ; then
-        if [ "$(md5sum "/boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}" | cut -d ' ' -f1)" != "$(wget -qO- "${DL_URL}/${FILENAME}.md5" | cut -d ' ' -f1)" ]; then
+        wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}.md5" "${DL_URL}/${FILENAME}.md5"
+        if [ "$(md5sum "/boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}" | cut -d ' ' -f1)" != "$(cat /boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}.md5" | cut -d ' ' -f1)" ]; then
           /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
           rm -rf /boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}
+          rm -rf /boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}.md5
         else
           if [ "${SW_STABLE}" == "true" ]; then
             /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful! UNSTABLE version not found, switched to STABLE!"
