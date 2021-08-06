@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2021.07.30
+# Plugin-Update-Helper version: 2021.08.06
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -12,6 +12,7 @@
 # Nvidia-Driver: https://github.com/ich777/unraid-nvidia-driver
 # USB Manager USBIP Addon: https://github.com/SimonFair/USB_Manager_USBIP_addon
 # USB Manager Serial Addon: https://github.com/SimonFair/USB_Manager_Serial_Options_addon
+# Unraid Open-ZFS: https://github.com/Steini1984/unRAID6-ZFS
 
 if [ ! -f /boot/changes.txt ]; then
   /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Error: Plugin Update Helper can't start! Can't find file /boot/changes.txt" -i "alert"
@@ -23,7 +24,7 @@ do
   sleep 2
   CUR_KERNEL_V="$(uname -r)"
   NEW_KERNEL_V="$(grep -E -A2 "Linux kernel" /boot/changes.txt | grep -E "version" | awk '{print $3}' | sort -V | tail -1)-Unraid"
-  NEW_UNRAID_V="$(head -2 /boot/changes.txt | grep -E "Version" | awk '{print $3}')"
+  NEW_UNRAID_V="$(head -2 /boot/changes.txt | grep -E "Version" | awk '{print $3}' | sort -V | tail -1)"
 
   # Check if Kernel version changed, notify user if so
   if [ "${CUR_KERNEL_V}" == "${NEW_KERNEL_V}" ]; then
@@ -228,6 +229,48 @@ do
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
       fi
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+    else
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+    fi
+  fi
+
+  if [ -f "/boot/config/plugins/unRAID6-ZFS.plg" ]; then
+    PLUGIN_NAME="unRAID Open-ZFS"
+    UNSTABLE=/boot/config/plugins/unRAID6-ZFS/USE_UNSTABLE_BUILDS
+    mkdir -p "/boot/config/plugins/unRAID6-ZFS/packages"
+    if [ -f ${UNSTABLE} ]; then
+      FILENAME="$(wget -qO- https://github.com/Steini1984/unRAID6-ZFS/tree/master/packages/Unstable | grep "zfs.*unRAID-${NEW_UNRAID_V}.x86_64.tgz" | grep -vi md5 | tail -1  | cut -d ">" -f 3 | cut -d "<" -f 1)"
+      DL_URL="https://raw.githubusercontent.com/Steini1984/unRAID6-ZFS/master/packages/Unstable"
+      if [ -z "${FILENAME}" ]; then
+        FILENAME="$(wget -qO- https://github.com/Steini1984/unRAID6-ZFS/tree/master/packages | grep "zfs.*unRAID-${NEW_UNRAID_V}.x86_64.tgz" | grep -vi md5 | tail -1  | cut -d ">" -f 3 | cut -d "<" -f 1)"
+        if [ ! -z "${FILENAME}" ]; then
+          rm -rf ${UNSTABLE}
+          SW_STABLE="true"
+          DL_URL="https://raw.githubusercontent.com/Steini1984/unRAID6-ZFS/master/packages"
+        else
+          DL_URL="empty"
+        fi
+      fi
+    else
+      FILENAME="$(wget -qO- https://github.com/Steini1984/unRAID6-ZFS/tree/master/packages | grep "zfs.*unRAID-${NEW_UNRAID_V}.x86_64.tgz" | grep -vi md5 | tail -1  | cut -d ">" -f 3 | cut -d "<" -f 1)"
+      if [ -z "${FILENAME}" ]; then
+        DL_URL="empty"
+      fi
+    fi
+
+    if [ "${DL_URL}" != "empty" ]; then
+      if wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}" "${DL_URL}/${FILENMAE}" ; then
+        if [ "$(md5sum "/boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}" "${DL_URL}/${FILENMAE}" | cut -d ' ' -f1)" != "$(wget -qO- "${DL_URL}/${FILENMAE}.md5" | cut -d ' ' -f1)" ]; then
+          /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        fi
+        if [ "${SW_STABLE}" == "true" ]; then
+          /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful! UNSTABLE version not found, switched to STABLE!"
+        else
+          /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        fi
+      else
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
     fi
