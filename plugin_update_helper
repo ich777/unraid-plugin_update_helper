@@ -246,7 +246,7 @@ do
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
-      /boot/config/plugins/Usb_manager_serial_options_addon/package/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
+      rm -rf /boot/config/plugins/Usb_manager_serial_options_addon/package/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
     fi
   fi
 
@@ -282,7 +282,7 @@ do
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
-      /boot/config/plugins/Usb_manager_aqc111_addon/package/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
+      rm -rf /boot/config/plugins/Usb_manager_aqc111_addon/package/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
     fi
   fi
 
@@ -325,7 +325,7 @@ do
         fi
       else
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
-        /boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}
+        rm -rf /boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
