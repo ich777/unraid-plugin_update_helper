@@ -272,7 +272,7 @@ do
     PLUGIN_NAME="USB net driver Addon"
     PACKAGE="usbnet-plugin-${NEW_KERNEL_V}"
     DL_URL="https://github.com/SimonFair/USB_Manager_usb_net_addon/releases/download/$NEW_KERNEL_V"
-    mkdir -p "/boot/config/plugins/Usb_manager_aqc111_addon/${NEW_KERNEL_V%%-*}"
+    mkdir -p "/boot/config/plugins/Usb_manager_aqc111_addon/package/${NEW_KERNEL_V%%-*}"
     if wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/Usb_manager_aqc111_addon/package/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz" "${DL_URL}/${PACKAGE}-1.txz" ; then
       if [ "$(md5sum "/boot/config/plugins/Usb_manager_aqc111_addon/package/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz" | cut -d ' ' -f1)" != "$(wget -qO- "${DL_URL}/${PACKAGE}-1.txz.md5" | cut -d ' ' -f1)" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
