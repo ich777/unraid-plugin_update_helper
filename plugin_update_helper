@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2021.08.22
+# Plugin-Update-Helper version: 2021.09.02
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -14,6 +14,7 @@
 # USB Manager Serial Addon: https://github.com/SimonFair/USB_Manager_Serial_Options_addon
 # USB Manager USB net Driver Addon: https://github.com/SimonFair/USB_Manager_usb_net_addon
 # Unraid Open-ZFS: https://github.com/Steini1984/unRAID6-ZFS
+# iSCSI Initiator: https://github.com/ich777/iscsi-initiator
 
 if [ ! -f /boot/changes.txt ]; then
   /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Error: Plugin Update Helper can't start! Can't find file /boot/changes.txt" -i "alert"
@@ -329,6 +330,24 @@ do
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+    fi
+  fi
+
+  if [ -f "/boot/config/plugins/iscsi-initiator.plg" ]; then
+    PLUGIN_NAME="iSCSI-Initiator"
+    PACKAGE="open_iscsi-plugin-${NEW_KERNEL_V}"
+    DL_URL="https://github.com/ich777/iscsi-initiator/releases/download/$NEW_KERNEL_V"
+    mkdir -p "/boot/config/plugins/iscsi-initiator/packages/${NEW_KERNEL_V%%-*}"
+    if wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/iscsi-initiator/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz" "${DL_URL}/${PACKAGE}-1.txz" ; then
+      if [ "$(md5sum "/boot/config/plugins/iscsi-initiator/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz" | cut -d ' ' -f1)" != "$(wget -qO- "${DL_URL}/${PACKAGE}-1.txz.md5" | cut -d ' ' -f1)" ]; then
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        rm -rf /boot/config/plugins/iscsi-initiator/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
+      else
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+      fi
+    else
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      rm -rf /boot/config/plugins/iscsi-initiator/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
     fi
   fi
 
