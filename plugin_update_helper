@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2021.09.02
+# Plugin-Update-Helper version: 2021.10.19
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -7,7 +7,6 @@
 # Coral-Driver: https://github.com/ich777/unraid-coral-driver
 # HPSAHBA-Patch: https://github.com/ich777/unraid-hpsahba
 # Sound-Driver: https://github.com/ich777/unraid-sound-driver
-# Mellanox-Firmware-Tools: https://github.com/ich777/unraid-mft-tools
 # DVB-Driver: https://github.com/ich777/unraid-dvb-driver
 # Nvidia-Driver: https://github.com/ich777/unraid-nvidia-driver
 # USB Manager USBIP Addon: https://github.com/SimonFair/USB_Manager_USBIP_addon
@@ -155,25 +154,6 @@ do
       rm -rf /boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
     fi
   fi
-
-  if [ -f "/boot/config/plugins/mft-tools.plg" ]; then
-    PLUGIN_NAME="Mellanox Firmware Tools"
-    PACKAGE="mfttools-plugin-${NEW_KERNEL_V}"
-    DL_URL="https://github.com/ich777/unraid-mft-tools/releases/download/$NEW_KERNEL_V"
-    mkdir -p "/boot/config/plugins/mft-tools/packages/${NEW_KERNEL_V%%-*}"
-    if wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/mft-tools/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz" "${DL_URL}/${PACKAGE}-1.txz" ; then
-      if [ "$(md5sum "/boot/config/plugins/mft-tools/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz" | cut -d ' ' -f1)" != "$(wget -qO- "${DL_URL}/${PACKAGE}-1.txz.md5" | cut -d ' ' -f1)" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
-        rm -rf /boot/config/plugins/mft-tools/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
-      else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
-      fi
-    else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
-      rm -rf /boot/config/plugins/mft-tools/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
-    fi
-  fi
-
 
   if [ -f "/boot/config/plugins/dvb-driver.plg" ]; then
     PLUGIN_NAME="DVB Driver"
