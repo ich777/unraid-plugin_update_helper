@@ -313,7 +313,7 @@ do
     fi
   fi
 
-if [ -f "/boot/config/plugins/uinput.plg" ]; then
+  if [ -f "/boot/config/plugins/uinput.plg" ]; then
     PLUGIN_NAME="uinput"
     PACKAGE="uinput-plugin-${NEW_KERNEL_V}"
     DL_URL="https://github.com/ich777/unraid-uinput/releases/download/$NEW_KERNEL_V"
