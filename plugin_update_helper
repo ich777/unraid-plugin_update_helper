@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.01.14
+# Plugin-Update-Helper version: 2022.01.19
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -269,47 +269,23 @@ do
 
   if [ -f "/boot/config/plugins/unRAID6-ZFS.plg" ]; then
     PLUGIN_NAME="unRAID Open-ZFS"
-    UNSTABLE=/boot/config/plugins/unRAID6-ZFS/USE_UNSTABLE_BUILDS
-    mkdir -p "/boot/config/plugins/unRAID6-ZFS/packages"
-    if [ -f ${UNSTABLE} ]; then
-      FILENAME="$(wget -qO- https://github.com/Steini1984/unRAID6-ZFS/tree/master/packages/Unstable | grep "zfs.*unRAID-${NEW_UNRAID_V}.x86_64.tgz" | grep -vi md5 | tail -1  | cut -d ">" -f 3 | cut -d "<" -f 1)"
-      DL_URL="https://raw.githubusercontent.com/Steini1984/unRAID6-ZFS/master/packages/Unstable"
-      if [ -z "${FILENAME}" ]; then
-        FILENAME="$(wget -qO- https://github.com/Steini1984/unRAID6-ZFS/tree/master/packages | grep "zfs.*unRAID-${NEW_UNRAID_V}.x86_64.tgz" | grep -vi md5 | tail -1  | cut -d ">" -f 3 | cut -d "<" -f 1)"
-        if [ ! -z "${FILENAME}" ]; then
-          rm -rf ${UNSTABLE}
-          SW_STABLE="true"
-          DL_URL="https://raw.githubusercontent.com/Steini1984/unRAID6-ZFS/master/packages"
-        else
-          DL_URL="empty"
-        fi
-      fi
-    else
-      FILENAME="$(wget -qO- https://github.com/Steini1984/unRAID6-ZFS/tree/master/packages | grep "zfs.*unRAID-${NEW_UNRAID_V}.x86_64.tgz" | grep -vi md5 | tail -1  | cut -d ">" -f 3 | cut -d "<" -f 1)"
-      DL_URL="https://raw.githubusercontent.com/Steini1984/unRAID6-ZFS/master/packages"
-      if [ -z "${FILENAME}" ]; then
-        DL_URL="empty"
-      fi
+    PACKAGE="zfs"
+    DL_URL="https://github.com/Steini1984/unRAID6-ZFS/releases/download/$NEW_KERNEL_V"
+    LAT_V="$(wget -qO- https://api.github.com/repos/Steini1984/unRAID6-ZFS/releases/tags/${NEW_KERNEL_V} | jq -r '.assets[].name' | grep -E 'zfs-.*.tgz' | grep -E -v '\.md5$' | sort -V | tail -1 | cut -d '-' -f2)"
+    if [ -z "${LAT_V}" ]; then
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} Error: Can't get latest version!" -i "alert"
     fi
-
-    if [ "${DL_URL}" != "empty" ]; then
-      if wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}" "${DL_URL}/${FILENAME}" ; then
-        if [ "$(md5sum "/boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}" | cut -d ' ' -f1)" != "$(wget -qO- "${DL_URL}/${FILENAME}.md5" | cut -d ' ' -f1)" ]; then
-          /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
-          rm -rf /boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}
-        else
-          if [ "${SW_STABLE}" == "true" ]; then
-            /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful! UNSTABLE version not found, switched to STABLE!"
-          else
-            /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
-          fi
-        fi
+    mkdir -p "/boot/config/plugins/unRAID6-ZFS/packages"
+    if wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/unRAID6-ZFS/packages/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V}-1.tgz" "${DL_URL}/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V}-1.tgz" ; then
+      if [ "$(md5sum "/boot/config/plugins/unRAID6-ZFS/packages/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V}-1.tgz" | cut -d ' ' -f1)" != "$(wget -qO- "${DL_URL}/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V}-1.tgz.md5" | cut -d ' ' -f1)" ]; then
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        rm -rf /boot/config/plugins/unRAID6-ZFS/packages/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V}-1.tgz
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
-        rm -rf /boot/config/plugins/unRAID6-ZFS/packages/${FILENAME}
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      rm -rf /boot/config/plugins/unRAID6-ZFS/packages/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V}-1.tgz
     fi
   fi
 
