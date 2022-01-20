@@ -274,7 +274,7 @@ do
     UNSTABLE_BUILDS="$(cat /boot/config/plugins/unRAID6-ZFS/settings.cfg | grep "unstable_packages" | cut -d '=' -f2)"
 
     if [ "$UNSTABLE_BUILDS" == "true" ]; then
-      AVAIL_V="$(wget -qO- https://api.github.com/repos/Steini1984/unRAID6-ZFS/releases/tags/${KERNEL_V} | jq -r '.assets[].name' | grep -E 'zfs-.*.tgz' | grep -E -v '\.md5$' | sort -V | cut -d '-' -f2)"
+      AVAIL_V="$(wget -qO- https://api.github.com/repos/Steini1984/unRAID6-ZFS/releases/tags/${NEW_KERNEL_V} | jq -r '.assets[].name' | grep -E 'zfs-.*.tgz' | grep -E -v '\.md5$' | sort -V | cut -d '-' -f2)"
       if [ -z "$(echo "$AVAIL_V" | grep -E "rc|beta")" ]; then
         sed -i '/unstable_packages=/c\unstable_packages=false' "/boot/config/plugins/unRAID6-ZFS/settings.cfg"
         AVAIL_V="$(echo "$AVAIL_V" | grep -v -E "rc|beta")"
@@ -282,7 +282,7 @@ do
         AVAIL_V="$(echo "$AVAIL_V" | grep -E "rc|beta")"
       fi
     else
-      AVAIL_V="$(wget -qO- https://api.github.com/repos/Steini1984/unRAID6-ZFS/releases/tags/${KERNEL_V} | jq -r '.assets[].name' | grep -E 'zfs-.*.tgz' | grep -E -v '\.md5$' | sort -V | cut -d '-' -f2 | grep -v -E "rc|beta" )"
+      AVAIL_V="$(wget -qO- https://api.github.com/repos/Steini1984/unRAID6-ZFS/releases/tags/${NEW_KERNEL_V} | jq -r '.assets[].name' | grep -E 'zfs-.*.tgz' | grep -E -v '\.md5$' | sort -V | cut -d '-' -f2 | grep -v -E "rc|beta" )"
     fi
 
     LAT_V="$(echo "$AVAIL_V" | sort -V | tail -1)"
