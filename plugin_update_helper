@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.01.21
+# Plugin-Update-Helper version: 2022.03.19
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -24,6 +24,13 @@ do
   sleep 2
   CUR_KERNEL_V="$(uname -r)"
   NEW_KERNEL_V="$(grep -E -A2 "Linux kernel" /boot/changes.txt | grep -E "version" | awk '{print $3}' | sort -V | tail -1)-Unraid"
+  if [ -z "${NEW_KERNEL_V}" ]; then
+    NEW_KERNEL_V="$(grep -E -A2 "Linux kernel" /boot/changes.txt | grep -E "Unraid" | awk '{print $3}' | sort -V | tail -1)"
+  fi
+  if [ -z "${NEW_KERNEL_V}" ]; then
+    /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Something went horrybly wrong, can't fetch new unRAID Kernel version, please reboot your Server and make sure that you have a active Internet connection on boot without any AdBlocking softwar infront of it!"  -i "alert"
+    exit 1
+  fi
   NEW_UNRAID_V="$(head -2 /boot/changes.txt | grep -E "Version" | awk '{print $3}' | sort -V | tail -1)"
 
   # Check if Kernel version changed, notify user if so
