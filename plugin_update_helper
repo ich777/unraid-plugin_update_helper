@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.03.19
+# Plugin-Update-Helper version: 2022.03.20
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -24,7 +24,7 @@ do
   sleep 2
   CUR_KERNEL_V="$(uname -r)"
   NEW_KERNEL_V="$(grep -E -A2 "Linux kernel" /boot/changes.txt | grep -E "version" | awk '{print $3}' | sort -V | tail -1)-Unraid"
-  if [ -z "${NEW_KERNEL_V}" ]; then
+  if [ "${NEW_KERNEL_V}" == "-Unraid" ]; then
     NEW_KERNEL_V="$(grep -E -A2 "Linux kernel" /boot/changes.txt | grep -E "Unraid" | awk '{print $3}' | sort -V | tail -1)"
   fi
   if [ -z "${NEW_KERNEL_V}" ]; then
