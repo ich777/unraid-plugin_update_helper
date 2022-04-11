@@ -7,7 +7,6 @@
 - Coral-Driver: https://github.com/ich777/unraid-coral-driver
 - HPSAHBA-Patch: https://github.com/ich777/unraid-hpsahba
 - Sound-Driver: https://github.com/ich777/unraid-sound-driver
-- Mellanox-Firmware-Tools: https://github.com/ich777/unraid-mft-tools
 - DVB-Driver: https://github.com/ich777/unraid-dvb-driver
 - Nvidia-Driver: https://github.com/ich777/unraid-nvidia-driver
 - USB Manager USBIP Addon: https://github.com/SimonFair/USB_Manager_USBIP_addon
