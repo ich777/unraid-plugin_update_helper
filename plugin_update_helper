@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.05.02
+# Plugin-Update-Helper version: 2022.05.06
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -90,7 +90,7 @@ do
     elif [ "${VENDOR}" == "AuthenticAMD" ]; then
        VENDOR="AMD"
     fi
-    LAT_V="$(wget -qO- https://api.github.com/repos/ich777/unraid-corefreq/releases/tags/${NEW_KERNEL_V}-Unraid | jq -r '.assets[].name' | grep 'corefreq_'${VENDOR}'' | grep -E -v '\.md5$' | cut -d '-' -f2 | sort -V | tail -1)"
+    LAT_V="$(wget -qO- https://api.github.com/repos/ich777/unraid-corefreq/releases/tags/${NEW_KERNEL_V} | jq -r '.assets[].name' | grep 'corefreq_'${VENDOR}'' | grep -E -v '\.md5$' | cut -d '-' -f2 | sort -V | tail -1)"
     if [ -z "${LAT_V}" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} Error: Can't get latest version!" -i "alert"
     fi
