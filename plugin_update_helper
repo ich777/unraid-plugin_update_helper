@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.05.22
+# Plugin-Update-Helper version: 2022.05.31
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -14,6 +14,7 @@
 # Unraid Open-ZFS: https://github.com/Steini1984/unRAID6-ZFS
 # Unraid uinput: https://github.com/ich777/unraid-uinput
 # Unraid OpenRGB Patch: https://github.com/ich777/unraid-openrgb-patch
+# QNAP-EC: https://github.com/ich777/unraid-qnapec
 
 if [ ! -f /boot/changes.txt ]; then
   /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Error: Plugin Update Helper can't start! Can't find file /boot/changes.txt" -i "alert"
@@ -326,6 +327,24 @@ do
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
+    fi
+  fi
+
+  if [ -f "/boot/config/plugins/qnap-ec.plg" ]; then
+    PLUGIN_NAME="QNAP-EC"
+    PACKAGE="qnapec-plugin-${NEW_KERNEL_V%%-*}-Unraid"
+    DL_URL="https://github.com/ich777/unraid-qnapec/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
+    mkdir -p "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}"
+    if wget -q -nc -O "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz" "${DL_URL}/${PACKAGE}-1.txz" ; then
+      if [ "$(md5sum "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz" | cut -d ' ' -f1)" != "$(wget -qO- "${DL_URL}/${PACKAGE}-1.txz.md5" | cut -d ' ' -f1)" ]; then
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        rm -rf /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
+      else
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+      fi
+    else
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      rm -rf /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
     fi
   fi
 
