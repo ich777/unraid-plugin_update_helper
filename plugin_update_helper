@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.07.17
+# Plugin-Update-Helper version: 2022.07.19
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -55,6 +55,7 @@ do
         rm -rf /boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
       else
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        rm -rf $(ls -d /boot/config/plugins/amd-vendor-reset/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
@@ -83,6 +84,7 @@ do
         rm -rf /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}_${VENDOR}-${LAT_V}-x86_64-1.txz
       else
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        rm -rf $(ls -d /boot/config/plugins/corefreq/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
@@ -101,6 +103,7 @@ do
         rm -rf /boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
       else
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        rm -rf $(ls -d /boot/config/plugins/coral-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
@@ -119,6 +122,7 @@ do
         rm -rf /boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
       else
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        rm -rf $(ls -d /boot/config/plugins/hpsahba/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
@@ -137,6 +141,7 @@ do
         rm -rf /boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
       else
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        rm -rf $(ls -d /boot/config/plugins/sound-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
@@ -155,6 +160,7 @@ do
         rm -rf /boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
       else
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        rm -rf $(ls -d /boot/config/plugins/dvb-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
@@ -195,6 +201,7 @@ do
       else
         sed -i '/local_version=/c\local_version='${NV_DRV_V}'' "/boot/config/plugins/nvidia-driver/settings.cfg"
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        rm -rf $(ls -d /boot/config/plugins/nvidia-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
@@ -213,6 +220,7 @@ do
         rm -rf /boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
       else
               /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+              rm -rf $(ls -d /boot/config/plugins/Usb_manager_serial_options_addon/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
@@ -231,6 +239,7 @@ do
         rm -rf /boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
       else
           /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+          rm -rf $(ls -d /boot/config/plugins/Usb_manager_usbip_addon/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
@@ -261,16 +270,17 @@ do
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} Error: Can't get latest version!" -i "alert"
     fi
     mkdir -p "/boot/config/plugins/unRAID6-ZFS/packages/${NEW_KERNEL_V%%-*}"
-    if wget -q -nc -O "/boot/config/plugins/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V%%-*}-Unraid-1.tgz" "${DL_URL}/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V%%-*}-Unraid-1.tgz" ; then
-      if [ "$(md5sum "/boot/config/plugins/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V%%-*}-Unraid-1.tgz" | cut -d ' ' -f1)" != "$(wget -qO- "${DL_URL}/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V%%-*}-Unraid-1.tgz.md5" | cut -d ' ' -f1)" ]; then
+    if wget -q -nc -O "/boot/config/plugins/unRAID6-ZFS/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V%%-*}-Unraid-1.tgz" "${DL_URL}/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V%%-*}-Unraid-1.tgz" ; then
+      if [ "$(md5sum "/boot/config/plugins/unRAID6-ZFS/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V%%-*}-Unraid-1.tgz" | cut -d ' ' -f1)" != "$(wget -qO- "${DL_URL}/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V%%-*}-Unraid-1.tgz.md5" | cut -d ' ' -f1)" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
-        rm -rf /boot/config/plugins/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V%%-*}-Unraid-1.tgz
+        rm -rf /boot/config/plugins/unRAID6-ZFS/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V%%-*}-Unraid-1.tgz
       else
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        rm -rf $(ls -d /boot/config/plugins/unRAID6-ZFS/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
-      rm -rf /boot/config/plugins/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V%%-*}-Unraid-1.tgz
+      rm -rf /boot/config/plugins/unRAID6-ZFS/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-${LAT_V}-${NEW_KERNEL_V%%-*}-Unraid-1.tgz
     fi
   fi
 
@@ -285,6 +295,7 @@ do
         rm -rf /boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
       else
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        rm -rf $(ls -d /boot/config/plugins/openrgb-patch/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
@@ -303,6 +314,7 @@ do
         rm -rf /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
       else
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        rm -rf $(ls -d /boot/config/plugins/qnap-ec/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
