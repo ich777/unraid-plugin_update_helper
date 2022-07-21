@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.07.21c
+# Plugin-Update-Helper version: 2022.07.21d
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -67,30 +67,32 @@ do
 
   if [ -f "/boot/config/plugins/corefreq.plg" ]; then
     PLUGIN_NAME="CoreFreq"
-    PACKAGE="corefreq"
-    DL_URL="https://github.com/ich777/unraid-corefreq/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
-    VENDOR=$(lscpu | awk '/Vendor ID/{print $3}')
+    VENDOR=$(lscpu | awk '/Vendor ID/{print $3}' | head -1)
     if [ "${VENDOR}" == "GenuineIntel" ]; then
       VENDOR="INTEL"
     elif [ "${VENDOR}" == "AuthenticAMD" ]; then
        VENDOR="AMD"
     fi
-    LAT_V="$(wget -qO- https://api.github.com/repos/ich777/unraid-corefreq/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep 'corefreq_'${VENDOR}'' | grep -E -v '\.md5$' | cut -d '-' -f2 | sort -V | tail -1)"
-    if [ -z "${LAT_V}" ]; then
+    PACKAGE="corefreq_${VENDOR}"
+    DL_URL="https://github.com/ich777/unraid-corefreq/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
+    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-corefreq/releases/tags/${KERNEL_V} | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    if [ -z "${LAT_PACKAGE}" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} Error: Can't get latest version!" -i "alert"
-    fi
-    mkdir -p "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}"
-    if wget -q -nc -O "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}_${VENDOR}-${LAT_V}-x86_64-1.txz" "${DL_URL}/${PACKAGE}_${VENDOR}-${LAT_V}-x86_64-1.txz" ; then
-      if [ "$(md5sum "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}_${VENDOR}-${LAT_V}-x86_64-1.txz" | cut -d ' ' -f1)" != "$(wget -qO- "${DL_URL}/${PACKAGE}_${VENDOR}-${LAT_V}-x86_64-1.txz.md5" | cut -d ' ' -f1)" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
-        rm -rf /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}_${VENDOR}-${LAT_V}-x86_64-1.txz
-      else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
-        rm -rf $(ls -d /boot/config/plugins/corefreq/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
-      fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
-      rm -rf /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}_${VENDOR}-${LAT_V}-x86_64-1.txz
+      mkdir -p "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}"
+      if wget -q -nc -O "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+        wget -q -nc -O "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
+        if [ "$(md5sum /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
+          /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+          rm -rf /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
+        else
+          /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+          rm -rf $(ls -d /boot/config/plugins/corefreq/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
+        fi
+      else
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+        rm -rf /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
+      fi
     fi
   fi
 
