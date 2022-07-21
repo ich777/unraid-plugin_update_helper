@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.07.21a
+# Plugin-Update-Helper version: 2022.07.21b
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -301,39 +301,43 @@ do
 
   if [ -f "/boot/config/plugins/openrgb-patch.plg" ]; then
     PLUGIN_NAME="OpenRGB Patch"
-    PACKAGE="openrgb_patch-plugin-${NEW_KERNEL_V%%-*}-Unraid"
+    PACKAGE="openrgb_patch"
     DL_URL="https://github.com/ich777/unraid-openrgb-patch/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
+    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-openrgb-patch/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
     mkdir -p "/boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}"
-    if wget -q -nc -O "/boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz" "${DL_URL}/${PACKAGE}-1.txz" ; then
-      if [ "$(md5sum "/boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz" | cut -d ' ' -f1)" != "$(wget -qO- "${DL_URL}/${PACKAGE}-1.txz.md5" | cut -d ' ' -f1)" ]; then
+    if wget -q -nc -O "/boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+      wget -q -nc -O "/boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
+      if [ "$(md5sum /boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
-        rm -rf /boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
+        rm -rf /boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
       else
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/openrgb-patch/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
-      rm -rf /boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
+      rm -rf /boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
     fi
   fi
 
   if [ -f "/boot/config/plugins/qnap-ec.plg" ]; then
     PLUGIN_NAME="QNAP-EC"
-    PACKAGE="qnapec-plugin-${NEW_KERNEL_V%%-*}-Unraid"
+    PACKAGE="qnapec"
     DL_URL="https://github.com/ich777/unraid-qnapec/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
+    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-qnapec/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
     mkdir -p "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}"
-    if wget -q -nc -O "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz" "${DL_URL}/${PACKAGE}-1.txz" ; then
-      if [ "$(md5sum "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz" | cut -d ' ' -f1)" != "$(wget -qO- "${DL_URL}/${PACKAGE}-1.txz.md5" | cut -d ' ' -f1)" ]; then
+    if wget -q -nc -O "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+      wget -q -nc -O "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
+      if [ "$(md5sum /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
-        rm -rf /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
+        rm -rf /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
       else
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/qnap-ec/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
-      rm -rf /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}-1.txz
+      rm -rf /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
     fi
   fi
 
