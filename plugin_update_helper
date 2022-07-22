@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.07.22e
+# Plugin-Update-Helper version: 2022.07.22f
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -243,15 +243,15 @@ do
       fi
     fi
     mkdir -p "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}"
-    if wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
-      wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
-      if [ "$(md5sum /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$( cat /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
+    if wget -q -nc -O "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+      wget -q -nc -O "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
+      if [ "$(md5sum /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
       else
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} v$(echo $LAT_PACKAGE | cut -d '-' -f2) download successful!"
-        rm -rf $(ls -d /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/* | grep -v "${NEW_KERNEL_V%%-*}")
-        rm -rf $(ls /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/* 2>/dev/null | grep -v "$LAT_PACKAGE")
+        rm -rf $(ls -d /boot/config/plugins/nvidia-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
+        rm -rf $(find /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/ -type f -maxdepth 1 | grep -v "${PACKAGE}")
       fi
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
