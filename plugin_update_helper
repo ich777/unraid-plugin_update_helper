@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.07.22
+# Plugin-Update-Helper version: 2022.07.22a
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -82,7 +82,7 @@ do
       mkdir -p "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}"
       if wget -q -nc -O "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
         wget -q -nc -O "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
-        if [ "$(md5sum /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
+        if [ "$(md5sum /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
           /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
           rm -rf /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         else
@@ -200,7 +200,7 @@ do
         sed -i '/driver_version=/c\driver_version=latest' "/boot/config/plugins/nvidia-driver/settings.cfg"
       fi
     elif [ "${SET_DRV_V}" == "latest_nfb" ]; then
-      LAT_NFB_AVAIL="$(echo "$BRANCHES" | grep 'NFB' | cut -d '=' -f2 | sort -V)"      DL_DRV="$(comm -12 <(echo "$DRIVER_AVAIL") <(echo "$LAT_NFB_AVAIL") | sort -V | tail -1)"
+      LAT_NFB_AVAIL="$(echo "$BRANCHES" | grep 'NFB' | cut -d '=' -f2 | sort -V)"      
       LAT_PACKAGE="$(comm -12 <(echo "$DRIVER_AVAIL" | cut -d '-' -f2) <(echo "$LAT_NFB_AVAIL") | sort -V | tail -1)"
       if [ -z "${LAT_PACKAGE}" ]; then
         LAT_PACKAGE="$(echo "$DRIVER_AVAIL" | tail -1)"
@@ -213,7 +213,7 @@ do
         sed -i '/driver_version=/c\driver_version=latest' "/boot/config/plugins/nvidia-driver/settings.cfg"
       fi
     fi
-
+    mkdir -p "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
       wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$( cat /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
