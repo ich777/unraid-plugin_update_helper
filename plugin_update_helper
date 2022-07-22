@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.07.22c
+# Plugin-Update-Helper version: 2022.07.22d
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -50,6 +50,10 @@ do
     PACKAGE="gnif_vendor_reset"
     DL_URL="https://github.com/ich777/unraid-amd-vendor-reset/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-amd-vendor-reset/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    if [ -z "${LAT_PACKAGE}" ]; then
+      sleep 2
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-amd-vendor-reset/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    fi
     mkdir -p "/boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
       wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
@@ -78,6 +82,10 @@ do
     DL_URL="https://github.com/ich777/unraid-corefreq/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-corefreq/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
     if [ -z "${LAT_PACKAGE}" ]; then
+      sleep 2
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-corefreq/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    fi
+    if [ -z "${LAT_PACKAGE}" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} Error: Can't get latest version!" -i "alert"
     else
       mkdir -p "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}"
@@ -103,6 +111,10 @@ do
     PACKAGE="Coral"
     DL_URL="https://github.com/ich777/unraid-coral-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-coral-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    if [ -z "${LAT_PACKAGE}" ]; then
+      sleep 2
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-coral-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    fi
     mkdir -p "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
       wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
@@ -124,6 +136,10 @@ do
     PACKAGE="hpsahba"
     DL_URL="https://github.com/ich777/unraid-hpsahba/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-hpsahba/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    if [ -z "${LAT_PACKAGE}" ]; then
+      sleep 2
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-hpsahba/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    fi
     mkdir -p "/boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
       wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
@@ -145,6 +161,10 @@ do
     PACKAGE="sound"
     DL_URL="https://github.com/ich777/unraid-sound-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-sound-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    if [ -z "${LAT_PACKAGE}" ]; then
+      sleep 2
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-sound-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    fi
     mkdir -p "/boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
       wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
@@ -166,6 +186,10 @@ do
     PACKAGE="$(grep "dvb_package" "/boot/config/plugins/dvb-driver/settings.cfg" | cut -d '=' -f2)"
     DL_URL="https://github.com/ich777/unraid-dvb-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-dvb-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    if [ -z "${LAT_PACKAGE}" ]; then
+      sleep 2
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-dvb-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    fi
     mkdir -p "/boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
       wget -q -nc -O "/boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
@@ -187,6 +211,10 @@ do
     PLUGIN_NAME="Nvidia Driver"
     PACKAGE="nvidia"
     DRIVER_AVAIL="$(wget -qO- https://api.github.com/repos/ich777/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep -E ${PACKAGE} | grep -E -v '\.md5$' | sort -V)"
+    if [ -z "${DRIVER_AVAIL}" ]; then
+      sleep 2
+      DRIVER_AVAIL="$(wget -qO- https://api.github.com/repos/ich777/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep -E ${PACKAGE} | grep -E -v '\.md5$' | sort -V)"
+    fi
     BRANCHES="$(wget -qO- https://raw.githubusercontent.com/ich777/versions/master/nvidia_versions | grep -v "UPDATED")"
     DL_URL="https://github.com/ich777/unraid-nvidia-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
     SET_DRV_V="$(grep "driver_version" "/boot/config/plugins/nvidia-driver/settings.cfg" | cut -d '=' -f2)"
@@ -236,6 +264,10 @@ do
     PACKAGE="usbserial"
     DL_URL="https://github.com/SimonFair/USB_Manager_Serial_Options_addon/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/SimonFair/USB_Manager_Serial_Options_addon/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    if [ -z "${LAT_PACKAGE}" ]; then
+      sleep 2
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/SimonFair/USB_Manager_Serial_Options_addon/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    fi
     mkdir -p "/boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
       wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
@@ -257,6 +289,10 @@ do
     PACKAGE="usbip"	
     DL_URL="https://github.com/SimonFair/USB_Manager_USBIP_addon/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/SimonFair/USB_Manager_USBIP_addon/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    if [ -z "${LAT_PACKAGE}" ]; then
+      sleep 2
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/SimonFair/USB_Manager_USBIP_addon/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    fi
     mkdir -p "/boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
       wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
@@ -281,6 +317,10 @@ do
 
     if [ "$UNSTABLE_BUILDS" == "true" ]; then
       AVAIL_V="$(wget -qO- https://api.github.com/repos/Steini1984/unRAID6-ZFS/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V)"
+      if [ -z "${AVAIL_V}" ]; then
+        sleep 2
+        AVAIL_V="$(wget -qO- https://api.github.com/repos/Steini1984/unRAID6-ZFS/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V)"
+      fi
       if [ -z "$(echo "$AVAIL_V" | grep -E "rc|beta")" ]; then
         sed -i '/unstable_packages=/c\unstable_packages=false' "/boot/config/plugins/unRAID6-ZFS/settings.cfg"
         AVAIL_V="$(echo "$AVAIL_V" | grep -v -E "rc|beta")"
@@ -289,6 +329,10 @@ do
       fi
     else
       AVAIL_V="$(wget -qO- https://api.github.com/repos/Steini1984/unRAID6-ZFS/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | grep -v -E "rc|beta" )"
+      if [ -z "${AVAIL_V}" ]; then
+        sleep 2
+        AVAIL_V="$(wget -qO- https://api.github.com/repos/Steini1984/unRAID6-ZFS/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | grep -v -E "rc|beta" )"
+      fi
     fi
 
     LAT_PACKAGE="$(echo "$AVAIL_V" | sort -V | tail -1)"
@@ -317,6 +361,10 @@ do
     PACKAGE="openrgb_patch"
     DL_URL="https://github.com/ich777/unraid-openrgb-patch/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-openrgb-patch/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    if [ -z "${LAT_PACKAGE}" ]; then
+      sleep 2
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-openrgb-patch/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    fi
     mkdir -p "/boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
       wget -q -nc -O "/boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
@@ -338,6 +386,10 @@ do
     PACKAGE="qnapec"
     DL_URL="https://github.com/ich777/unraid-qnapec/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-qnapec/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    if [ -z "${LAT_PACKAGE}" ]; then
+      sleep 2
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-qnapec/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    fi
     mkdir -p "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
       wget -q -nc -O "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
@@ -359,6 +411,10 @@ do
     PACKAGE="nct6687d"
     DL_URL="https://github.com/ich777/unraid-nct6687-driver/releases/download/$KERNEL_V"
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-nct6687-driver/releases/tags/${KERNEL_V} | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    if [ -z "${LAT_PACKAGE}" ]; then
+      sleep 2
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-nct6687-driver/releases/tags/${KERNEL_V} | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    fi
     mkdir -p "/boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
       wget -q -nc -O "/boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
