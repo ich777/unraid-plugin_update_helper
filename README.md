@@ -14,5 +14,6 @@
 - Unraid Open-ZFS: https://github.com/Steini1984/unRAID6-ZFS
 - Unraid OpenRGB Patch: https://github.com/ich777/unraid-openrgb-patch
 - QNAP-EC: https://github.com/ich777/unraid-qnapec
+- NCT6687: https://github.com/ich777/unraid-nct6687-driver
 
 _**If you got any suggestions or issues feel free to create a Github Issue here or contact me on the unRAID Forums.**_
