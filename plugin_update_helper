@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.07.22f
+# Plugin-Update-Helper version: 2022.07.22g
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -409,11 +409,11 @@ do
   if [ -f "/boot/config/plugins/nct6687-driver.plg " ]; then
     PLUGIN_NAME="NCT6687"
     PACKAGE="nct6687d"
-    DL_URL="https://github.com/ich777/unraid-nct6687-driver/releases/download/$KERNEL_V"
-    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-nct6687-driver/releases/tags/${KERNEL_V} | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    DL_URL="https://github.com/ich777/unraid-nct6687-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
+    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-nct6687-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
     if [ -z "${LAT_PACKAGE}" ]; then
       sleep 2
-      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-nct6687-driver/releases/tags/${KERNEL_V} | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-nct6687-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
     fi
     mkdir -p "/boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
