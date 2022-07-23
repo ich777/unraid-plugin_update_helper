@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.07.22g
+# Plugin-Update-Helper version: 2022.07.23
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -406,7 +406,7 @@ do
     fi
   fi
 
-  if [ -f "/boot/config/plugins/nct6687-driver.plg " ]; then
+  if [ -f "/boot/config/plugins/nct6687-driver.plg" ]; then
     PLUGIN_NAME="NCT6687"
     PACKAGE="nct6687d"
     DL_URL="https://github.com/ich777/unraid-nct6687-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
