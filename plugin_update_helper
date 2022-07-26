@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.07.23
+# Plugin-Update-Helper version: 2022.07.26
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -15,6 +15,7 @@
 # Unraid OpenRGB Patch: https://github.com/ich777/unraid-openrgb-patch
 # QNAP-EC: https://github.com/ich777/unraid-qnapec
 # NCT6687: https://github.com/ich777/unraid-nct6687-driver
+# Aquacomputer QUADRO hwmon: https://github.com/ich777/unraid-aquacomputer-quadro
 
 if [ ! -f /boot/changes.txt ]; then
   /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Error: Plugin Update Helper can't start! Can't find file /boot/changes.txt" -i "alert"
@@ -56,7 +57,7 @@ do
     fi
     mkdir -p "/boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
-      wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
+      wget -q -nc -O "/boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
@@ -117,7 +118,7 @@ do
     fi
     mkdir -p "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
-      wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
+      wget -q -nc -O "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
@@ -142,7 +143,7 @@ do
     fi
     mkdir -p "/boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
-      wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
+      wget -q -nc -O "/boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
@@ -167,7 +168,7 @@ do
     fi
     mkdir -p "/boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
-      wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
+      wget -q -nc -O "/boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
@@ -270,7 +271,7 @@ do
     fi
     mkdir -p "/boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
-      wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
+      wget -q -nc -O "/boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
@@ -295,7 +296,7 @@ do
     fi
     mkdir -p "/boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
-      wget -q -nc --show-progress --progress=bar:force:noscroll -O "/boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
+      wget -q -nc -O "/boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
@@ -428,6 +429,31 @@ do
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
+    fi
+  fi
+
+  if [ -f "/boot/config/plugins/aquacomputer-quadro-hwmon.plg" ]; then
+    PLUGIN_NAME="Aquacomputer QUADRO hwmon"
+    PACKAGE="aquacomputer_quadro"
+    DL_URL="https://github.com/ich777/unraid-aquacomputer-quadro/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
+    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-aquacomputer-quadro/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    if [ -z "${LAT_PACKAGE}" ]; then
+      sleep 2
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-aquacomputer-quadro/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    fi
+    mkdir -p "/boot/config/plugins/unraid-aquacomputer-quadro/packages/${NEW_KERNEL_V%%-*}"
+    if wget -q -nc -O "/boot/config/plugins/unraid-aquacomputer-quadro/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+      wget -q -nc -O "/boot/config/plugins/unraid-aquacomputer-quadro/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
+      if [ "$(md5sum /boot/config/plugins/unraid-aquacomputer-quadro/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/unraid-aquacomputer-quadro/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        rm -rf /boot/config/plugins/unraid-aquacomputer-quadro/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
+      else
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        rm -rf $(ls -d /boot/config/plugins/unraid-aquacomputer-quadro/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
+      fi
+    else
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      rm -rf /boot/config/plugins/unraid-aquacomputer-quadro/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
     fi
   fi
 
