@@ -28,7 +28,7 @@ do
   sleep 2
   CUR_KERNEL_V="$(uname -r)"
   NEW_KERNEL_V="$(grep -E -A2 "Linux kernel" /boot/changes.txt | grep -E "version" | awk '{print $3}' | grep "^[0-9]" | sort -V | tail -1)-Unraid"
-  if [ "${NEW_KERNEL_V}" == "-Unraid" ]; then
+  if [ -z "${NEW_KERNEL_V}" ]; then
     NEW_KERNEL_V="$(grep -E -A2 "Linux kernel" /boot/changes.txt | grep -E "Unraid" | awk '{print $3}' | grep "^[0-9]" | sort -V | tail -1)"
   fi
   if [ -z "${NEW_KERNEL_V%%-*}" ]; then
