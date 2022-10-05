@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.09.10
+# Plugin-Update-Helper version: 2022.10.05
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -211,15 +211,21 @@ do
 
   if [ -f "/boot/config/plugins/nvidia-driver.plg" ]; then
     PLUGIN_NAME="Nvidia Driver"
-    PACKAGE="nvidia"
-    DRIVER_AVAIL="$(wget -qO- https://api.github.com/repos/ich777/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V)"
-    if [ -z "${DRIVER_AVAIL}" ]; then
-      sleep 2
-      DRIVER_AVAIL="$(wget -qO- https://api.github.com/repos/ich777/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V)"
-    fi
-    BRANCHES="$(wget -qO- https://raw.githubusercontent.com/ich777/versions/master/nvidia_versions | grep -v "UPDATED")"
-    DL_URL="https://github.com/ich777/unraid-nvidia-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
     SET_DRV_V="$(grep "driver_version" "/boot/config/plugins/nvidia-driver/settings.cfg" | cut -d '=' -f2)"
+    if [ "${SET_DRV_V}" == "latest_nos" ]; then
+      PACKAGE="nvos"
+      OS="Open Source "
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep -E -v '\.md5$' | grep "${PACKAGE}" | sort -V | tail -1)"
+    else
+      PACKAGE="nvidia"
+      DRIVER_AVAIL="$(wget -qO- https://api.github.com/repos/ich777/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V)"
+      if [ -z "${DRIVER_AVAIL}" ]; then
+        sleep 2
+        DRIVER_AVAIL="$(wget -qO- https://api.github.com/repos/ich777/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V)"
+      fi
+      BRANCHES="$(wget -qO- https://raw.githubusercontent.com/ich777/versions/master/nvidia_versions | grep -v "UPDATED")"
+    fi
+    DL_URL="https://github.com/ich777/unraid-nvidia-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
 
     if [ "${SET_DRV_V}" == "latest" ]; then
       LAT_PACKAGE="$(echo "$DRIVER_AVAIL" | tail -1)"
@@ -237,6 +243,13 @@ do
         LAT_PACKAGE="$(echo "$DRIVER_AVAIL" | tail -1)"
         sed -i '/driver_version=/c\driver_version=latest' "/boot/config/plugins/nvidia-driver/settings.cfg"
       fi
+    elif [ "${SET_DRV_V}" == "latest_nos" ]; then
+      if [ -z "${LAT_PACKAGE}" ]; then
+        PACKAGE="nvidia"
+        unset OS
+        LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+        sed -i '/driver_version=/c\driver_version=latest' "/boot/config/plugins/nvidia-driver/settings.cfg"
+      fi
     else
       LAT_PACKAGE="$(echo "$DRIVER_AVAIL" | grep "$SET_DRV_V")"
       if [ -z "${LAT_PACKAGE}" ]; then
@@ -248,15 +261,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
       wget -q -nc -O "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} ${OS}v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} v$(echo $LAT_PACKAGE | cut -d '-' -f2) download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} ${OS}v$(echo $LAT_PACKAGE | cut -d '-' -f2) download successful!"
         rm -rf $(ls -d /boot/config/plugins/nvidia-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
         rm -rf $(find /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/ -type f -maxdepth 1 | grep -v "${PACKAGE}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} ${OS}v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
     fi
   fi
