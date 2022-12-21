@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2022.10.05
+# Plugin-Update-Helper version: 2022.12.21
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -11,11 +11,9 @@
 # Nvidia-Driver: https://github.com/ich777/unraid-nvidia-driver
 # USB Manager USBIP Addon: https://github.com/SimonFair/USB_Manager_USBIP_addon
 # USB Manager Serial Addon: https://github.com/SimonFair/USB_Manager_Serial_Options_addon
-# Unraid Open-ZFS: https://github.com/Steini1984/unRAID6-ZFS
 # Unraid OpenRGB Patch: https://github.com/ich777/unraid-openrgb-patch
 # QNAP-EC: https://github.com/ich777/unraid-qnapec
 # NCT6687: https://github.com/ich777/unraid-nct6687-driver
-# Aquacomputer QUADRO hwmon: https://github.com/ich777/unraid-aquacomputer-quadro
 # IT87: https://github.com/ich777/unraid-it87-driver
 
 if [ ! -f /boot/changes.txt ]; then
@@ -324,53 +322,6 @@ do
     fi
   fi
 
-  if [ -f "/boot/config/plugins/unRAID6-ZFS.plg" ]; then
-    PLUGIN_NAME="unRAID Open-ZFS"
-    PACKAGE="zfs"
-    DL_URL="https://github.com/Steini1984/unRAID6-ZFS/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
-    UNSTABLE_BUILDS="$(cat /boot/config/plugins/unRAID6-ZFS/settings.cfg | grep "unstable_packages" | cut -d '=' -f2)"
-
-    if [ "$UNSTABLE_BUILDS" == "true" ]; then
-      AVAIL_V="$(wget -qO- https://api.github.com/repos/Steini1984/unRAID6-ZFS/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V)"
-      if [ -z "${AVAIL_V}" ]; then
-        sleep 2
-        AVAIL_V="$(wget -qO- https://api.github.com/repos/Steini1984/unRAID6-ZFS/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V)"
-      fi
-      if [ -z "$(echo "$AVAIL_V" | grep -E "rc|beta")" ]; then
-        sed -i '/unstable_packages=/c\unstable_packages=false' "/boot/config/plugins/unRAID6-ZFS/settings.cfg"
-        AVAIL_V="$(echo "$AVAIL_V" | grep -v -E "rc|beta")"
-      else
-        AVAIL_V="$(echo "$AVAIL_V" | grep -E "rc|beta")"
-      fi
-    else
-      AVAIL_V="$(wget -qO- https://api.github.com/repos/Steini1984/unRAID6-ZFS/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | grep -v -E "rc|beta" )"
-      if [ -z "${AVAIL_V}" ]; then
-        sleep 2
-        AVAIL_V="$(wget -qO- https://api.github.com/repos/Steini1984/unRAID6-ZFS/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | grep -v -E "rc|beta" )"
-      fi
-    fi
-
-    LAT_PACKAGE="$(echo "$AVAIL_V" | sort -V | tail -1)"
-    if [ -z "${LAT_PACKAGE}" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} Error: Can't get latest version!" -i "alert"
-    fi
-    mkdir -p "/boot/config/plugins/unRAID6-ZFS/packages/${NEW_KERNEL_V%%-*}"
-    if wget -q -nc -O "/boot/config/plugins/unRAID6-ZFS/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
-      wget -q -nc -O "/boot/config/plugins/unRAID6-ZFS/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
-      if [ "$(md5sum /boot/config/plugins/unRAID6-ZFS/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/unRAID6-ZFS/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
-        rm -rf /boot/config/plugins/unRAID6-ZFS/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
-      else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
-        rm -rf $(ls -d /boot/config/plugins/unRAID6-ZFS/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
-        rm -rf $(find /boot/config/plugins/unRAID6-ZFS/packages/${NEW_KERNEL_V%%-*}/ -type f -maxdepth 1 | grep -v "${LAT_PACKAGE}")
-      fi
-    else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
-      rm -rf /boot/config/plugins/unRAID6-ZFS/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
-    fi
-  fi
-
   if [ -f "/boot/config/plugins/openrgb-patch.plg" ]; then
     PLUGIN_NAME="OpenRGB Patch"
     PACKAGE="openrgb_patch"
@@ -468,31 +419,6 @@ do
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/it87-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
-    fi
-  fi
-
-  if [ -f "/boot/config/plugins/aquacomputer-quadro-hwmon.plg" ]; then
-    PLUGIN_NAME="Aquacomputer QUADRO hwmon"
-    PACKAGE="aquacomputer_quadro"
-    DL_URL="https://github.com/ich777/unraid-aquacomputer-quadro/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
-    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-aquacomputer-quadro/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
-    if [ -z "${LAT_PACKAGE}" ]; then
-      sleep 2
-      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-aquacomputer-quadro/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
-    fi
-    mkdir -p "/boot/config/plugins/unraid-aquacomputer-quadro/packages/${NEW_KERNEL_V%%-*}"
-    if wget -q -nc -O "/boot/config/plugins/unraid-aquacomputer-quadro/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
-      wget -q -nc -O "/boot/config/plugins/unraid-aquacomputer-quadro/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
-      if [ "$(md5sum /boot/config/plugins/unraid-aquacomputer-quadro/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/unraid-aquacomputer-quadro/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
-        rm -rf /boot/config/plugins/unraid-aquacomputer-quadro/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
-      else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
-        rm -rf $(ls -d /boot/config/plugins/unraid-aquacomputer-quadro/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
-      fi
-    else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
-      rm -rf /boot/config/plugins/unraid-aquacomputer-quadro/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
     fi
   fi
 
