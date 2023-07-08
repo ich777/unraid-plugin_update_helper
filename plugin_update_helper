@@ -446,7 +446,7 @@ do
       rm -rf /boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
     fi
   
-    if [ -f "/boot/config/plugins/unraid-r8125.plg" ]; then
+    if [ -f "/boot/config/plugins/unraid-r8152.plg" ]; then
     PLUGIN_NAME="RTL8156(B)"
     PACKAGE="r8152"
     DL_URL="https://github.com/jinlife/unraid-r8125-r8152-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
