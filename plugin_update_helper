@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2023.07.09
+# Plugin-Update-Helper version: 2023.07.10
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -421,7 +421,8 @@ do
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/it87-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
     fi
-  
+  fi
+
   if [ -f "/boot/config/plugins/unraid-r8125.plg" ]; then
     PLUGIN_NAME="RTL8125(B)"
     PACKAGE="r8125"
@@ -445,8 +446,9 @@ do
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
     fi
-  
-    if [ -f "/boot/config/plugins/unraid-r8152.plg" ]; then
+  fi
+
+  if [ -f "/boot/config/plugins/unraid-r8152.plg" ]; then
     PLUGIN_NAME="RTL8156(B)"
     PACKAGE="r8152"
     DL_URL="https://github.com/jinlife/unraid-r8125-r8152-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
