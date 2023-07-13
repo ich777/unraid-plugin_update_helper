@@ -509,7 +509,7 @@ do
   fi
 
   if [ -f "/boot/config/plugins/unraid-r8168.plg" ]; then
-    PLUGIN_NAME="RTL8168(B)"
+    PLUGIN_NAME="RTL8168"
     PACKAGE="r8168"
     DL_URL="https://github.com/jinlife/unraid-r8125-r8152-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/jinlife/unraid-r8125-r8152-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
