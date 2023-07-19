@@ -28,7 +28,7 @@ if [ -f "/boot/config/plugins/corefreq.plg" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} Error: Can't get latest version!" -i "alert"
   else
     mkdir -p "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}"
-    if wget -q --show-progress -F -O "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+    if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
       wget -q -F -O "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
         /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed: Checksum Error!" -i "alert"
@@ -57,7 +57,7 @@ if [ -f "/boot/config/plugins/coral-driver.plg" ]; then
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-coral-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   fi
   mkdir -p "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}"
-  if wget -q --show-progress -F -O "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
     wget -q -F -O "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
     if [ "$(md5sum /boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
@@ -84,7 +84,7 @@ if [ -f "/boot/config/plugins/hpsahba.plg" ]; then
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-hpsahba/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   fi
   mkdir -p "/boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}"
-  if wget -q --show-progress -F -O "/boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
     wget -q -F -O "/boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
     if [ "$(md5sum /boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
@@ -111,7 +111,7 @@ if [ -f "/boot/config/plugins/sound-driver.plg" ]; then
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-sound-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   fi
   mkdir -p "/boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}"
-  if wget -q --show-progress -F -O "/boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
     wget -q -F -O "/boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
     if [ "$(md5sum /boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
@@ -138,7 +138,7 @@ if [ -f "/boot/config/plugins/dvb-driver.plg" ]; then
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-dvb-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   fi
   mkdir -p "/boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}"
-  if wget -q --show-progress -F -O "/boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
     wget -q -F -O "/boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
     if [ "$(md5sum /boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} '${PACKAGE}' download failed: Checksum Error!" -i "alert"
@@ -205,7 +205,7 @@ if [ -f "/boot/config/plugins/nvidia-driver.plg" ]; then
     fi
   fi
   mkdir -p "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}"
-  if wget -q --show-progress -F -O "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
     wget -q -F -O "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
     if [ "$(md5sum /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} ${OS}v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed: Checksum Error!" -i "alert"
@@ -233,7 +233,7 @@ if [ -f "/boot/config/plugins/usb_manager_serial_options_addon.plg" ]; then
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/SimonFair/USB_Manager_Serial_Options_addon/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   fi
   mkdir -p "/boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}"
-  if wget -q --show-progress -F -O "/boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
     wget -q -F -O "/boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
     if [ "$(md5sum /boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
@@ -260,7 +260,7 @@ if [ -f "/boot/config/plugins/usb_manager_usbip_addon.plg" ]; then
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/SimonFair/USB_Manager_USBIP_addon/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   fi
   mkdir -p "/boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}"
-  if wget -q --show-progress -F -O "/boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
     wget -q -F -O "/boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
     if [ "$(md5sum /boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
@@ -287,7 +287,7 @@ if [ -f "/boot/config/plugins/openrgb-patch.plg" ]; then
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-openrgb-patch/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   fi
   mkdir -p "/boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}"
-  if wget -q --show-progress -F -O "/boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
     wget -q -F -O "/boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
     if [ "$(md5sum /boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
@@ -314,7 +314,7 @@ if [ -f "/boot/config/plugins/qnap-ec.plg" ]; then
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-qnapec/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   fi
   mkdir -p "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}"
-  if wget -q --show-progress -F -O "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
     wget -q -F -O "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
     if [ "$(md5sum /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
@@ -341,7 +341,7 @@ if [ -f "/boot/config/plugins/nct6687-driver.plg" ]; then
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-nct6687-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   fi
   mkdir -p "/boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}"
-  if wget -q --show-progress -F -O "/boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
     wget -q -F -O "/boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
     if [ "$(md5sum /boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
@@ -368,7 +368,7 @@ if [ -f "/boot/config/plugins/it87-driver.plg" ]; then
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-it87-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   fi
   mkdir -p "/boot/config/plugins/it87-driver/packages/${NEW_KERNEL_V%%-*}"
-  if wget -q --show-progress -F -O "/boot/config/plugins/it87-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/it87-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
     wget -q -F -O "/boot/config/plugins/it87-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
     if [ "$(md5sum /boot/config/plugins/it87-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/it87-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
@@ -395,7 +395,7 @@ if [ -f "/boot/config/plugins/unraid-r8125.plg" ]; then
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/jinlife/unraid-r8125-r8152-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   fi
   mkdir -p "/boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}"
-  if wget -q --show-progress -F -O "/boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
     wget -q -F -O "/boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
     if [ "$(md5sum /boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
@@ -422,7 +422,7 @@ if [ -f "/boot/config/plugins/unraid-r8152.plg" ]; then
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/jinlife/unraid-r8125-r8152-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   fi
   mkdir -p "/boot/config/plugins/r8152-driver/packages/${NEW_KERNEL_V%%-*}"
-  if wget -q --show-progress -F -O "/boot/config/plugins/r8152-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/r8152-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
     wget -q -F -O "/boot/config/plugins/r8152-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
     if [ "$(md5sum /boot/config/plugins/r8152-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/r8152-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
@@ -449,7 +449,7 @@ if [ -f "/boot/config/plugins/unraid-r8168.plg" ]; then
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/jinlife/unraid-r8125-r8152-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   fi
   mkdir -p "/boot/config/plugins/r8168-driver/packages/${NEW_KERNEL_V%%-*}"
-  if wget -q --show-progress -F -O "/boot/config/plugins/r8168-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/r8168-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
     wget -q -F -O "/boot/config/plugins/r8168-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
     if [ "$(md5sum /boot/config/plugins/r8168-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/r8168-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
