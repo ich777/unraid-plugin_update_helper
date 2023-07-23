@@ -1,8 +1,10 @@
 unset ERROR
 
+echo "Force Plugin Updates script version: 2023.07.23 by ich777"
+echo
 echo "Please don't close this window until it says finished!"
 
-NEW_KERNEL_V="$(pcregrep -oM 'Linux kernel[\s\S]*?version\s+\K\d+(\.\d+)+' /boot/changes.txt | sort -V | tail -1)-Unraid"
+NEW_KERNEL_V="$(pcregrep -oM '#?#? ?Linux kernel[\s]*?-? ?version:?\s+\K\d+(\.\d+)+' /boot/changes.txt | sort -V | tail -1)-Unraid"
 NEW_UNRAID_V="$(head -2 /boot/changes.txt | grep -E "Version" | awk '{print $3}' | sort -V | tail -1)"
 
 /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Forcing download from all plugin packages for new unRAID v${NEW_UNRAID_V}, download started in background! You will be notified when the download(s) is/are finished!"
