@@ -205,7 +205,16 @@ if [ -f "/boot/config/plugins/nvidia-driver.plg" ]; then
       sed -i '/driver_version=/c\driver_version=latest' "/boot/config/plugins/nvidia-driver/settings.cfg"
     fi
   else
-    LAT_PACKAGE="$(echo "$DRIVER_AVAIL" | grep "$SET_DRV_V")"
+    if [[ "${SET_DRV_V}" = 47* ]]; then
+      LAT_PACKAGE="$(echo "$DRIVER_AVAIL" | grep "\-47*" | sort -V | tail -1)"
+      if [ -z "${LAT_PACKAGE}" ]; then
+        LAT_PACKAGE="$(echo "$DRIVER_AVAIL" | grep "$SET_DRV_V")"
+      else
+        sed -i "/driver_version=/c\driver_version=$(echo $LAT_PACKAGE | cut -d '-' -f2)" "/boot/config/plugins/nvidia-driver/settings.cfg"
+      fi
+    else
+      LAT_PACKAGE="$(echo "$DRIVER_AVAIL" | grep "$SET_DRV_V")"
+    fi
     if [ -z "${LAT_PACKAGE}" ]; then
       LAT_PACKAGE="$(echo "$DRIVER_AVAIL" | tail -1)"
       sed -i '/driver_version=/c\driver_version=latest' "/boot/config/plugins/nvidia-driver/settings.cfg"
