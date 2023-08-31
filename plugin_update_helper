@@ -27,7 +27,7 @@ do
   retries=0
   while [ ! -f /boot/changes.txt ]; do
     if [ ${retries} -ge 4 ]; then
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Error: Can't find new changes.txt!"  -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Error: Timed out waiting for /boot/changes.txt!"  -i "alert"
       exit 1
     fi
     sleep 2
