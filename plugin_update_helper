@@ -23,8 +23,20 @@ if [ ! -f /boot/changes.txt ]; then
 fi
 while inotifywait -q /boot/changes.txt -e move_self,delete_self,modify >/dev/null 2>&1
 do
-  # Set Variables
+  # Wait for /boot/changes.txt to be available or error out after 10 seconds
+  retries=0
+  while [ ! -f /boot/changes.txt ]; do
+    if [ ${retries} -ge 4 ]; then
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Error: Can't find new changes.txt!"  -i "alert"
+      exit 1
+    fi
+    sleep 2
+    ((retries++))
+  done
+  unset retries
   sleep 2
+
+  # Set Variables
   CUR_KERNEL_V="$(uname -r)"
 
   if command -v pcregrep >/dev/null 2>&1; then
