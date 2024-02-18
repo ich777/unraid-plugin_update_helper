@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2023.11.23
+# Plugin-Update-Helper version: 2024.02.18
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -17,6 +17,7 @@
 # IT87: https://github.com/ich777/unraid-it87-driver
 # R8125, R8152, R8168: https://github.com/jinlife/unraid-r8125-r8152-driver
 # Intel Graphics SR-IOV: https://github.com/ich777/unraid-i915-sriov
+# asustor Platfrom Drivers: https://github.com/Terebi42/unraid-asustor-pfd
 
 if [ ! -f /boot/changes.txt ]; then
   /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Error: Plugin Update Helper can't start! Can't find file /boot/changes.txt" -i "alert"
@@ -582,6 +583,33 @@ do
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/i915-sriov/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
+	  ERROR+="${PLUGIN_NAME}, "
+    fi
+  fi
+
+  if [ -f "/boot/config/plugins/unraid-asustorpfd.plg" ]; then
+    PLUGIN_NAME="asustor Platform Drivers"
+    PACKAGE="asustor_pfd"
+    DL_URL="https://github.com/Terebi42/unraid-asustor-pfd/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
+    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/Terebi42/unraid-asustor-pfd/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    if [ -z "${LAT_PACKAGE}" ]; then
+      sleep 2
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/Terebi42/unraid-asustor-pfd/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    fi
+    mkdir -p "/boot/config/plugins/asustorpfd/packages/${NEW_KERNEL_V%%-*}"
+    if wget -q -nc -O "/boot/config/plugins/asustorpfd/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
+      wget -q -nc -O "/boot/config/plugins/asustorpfd/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
+      if [ "$(md5sum /boot/config/plugins/asustorpfd/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/asustorpfd/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        rm -rf /boot/config/plugins/asustorpfd/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
+        ERROR+="${PLUGIN_NAME}, "
+      else
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        rm -rf $(ls -d /boot/config/plugins/asustorpfd/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
+      fi
+    else
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      rm -rf /boot/config/plugins/asustorpfd/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
   fi
