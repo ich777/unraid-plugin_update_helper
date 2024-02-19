@@ -16,7 +16,7 @@
 - NCT6687: https://github.com/ich777/unraid-nct6687-driver
 - IT87: https://github.com/ich777/unraid-it87-driver
 - R8125, R8152 and R8168: https://github.com/jinlife/unraid-r8125-r8152-driver
-- Intel Graphics SR-IOV: https://github.com/ich777/unraid-i915-sriov
+- Intel Graphics SR-IOV: https://github.com/giganode/unraid-i915-sriov
 - asustor Platfrom Drivers: https://github.com/Terebi42/unraid-asustor-pfd
 
 _**If you got any suggestions or issues feel free to create a Github Issue here or contact me on the unRAID Forums.**_
