@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2024.02.18
+# Plugin-Update-Helper version: 2024.02.19
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -16,7 +16,7 @@
 # NCT6687: https://github.com/ich777/unraid-nct6687-driver
 # IT87: https://github.com/ich777/unraid-it87-driver
 # R8125, R8152, R8168: https://github.com/jinlife/unraid-r8125-r8152-driver
-# Intel Graphics SR-IOV: https://github.com/ich777/unraid-i915-sriov
+# Intel Graphics SR-IOV: https://github.com/giganode/unraid-i915-sriov
 # asustor Platfrom Drivers: https://github.com/Terebi42/unraid-asustor-pfd
 
 if [ ! -f /boot/changes.txt ]; then
@@ -563,11 +563,11 @@ do
   if [ -f "/boot/config/plugins/i915-sriov.plg" ]; then
     PLUGIN_NAME="Intel SR-IOV"
     PACKAGE="i915-sriov"
-    DL_URL="https://github.com/ich777/unraid-i915-sriov/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
-    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-i915-sriov/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    DL_URL="https://github.com/giganode/unraid-i915-sriov/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
+    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/giganode/unraid-i915-sriov/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
     if [ -z "${LAT_PACKAGE}" ]; then
       sleep 2
-      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-i915-sriov/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/giganode/unraid-i915-sriov/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
     fi
     mkdir -p "/boot/config/plugins/i915-sriov/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/i915-sriov/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
