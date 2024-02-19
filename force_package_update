@@ -5,7 +5,7 @@ if [ ! -f /boot/changes.txt ]; then
   exit 1
 fi
 
-echo "Force Plugin Updates script version: 2024.02.18 by ich777"
+echo "Force Plugin Updates script version: 2024.02.19 by ich777"
 echo
 echo "Please don't close this window until it says finished!"
 
@@ -487,11 +487,11 @@ fi
 if [ -f "/boot/config/plugins/i915-sriov.plg" ]; then
   PLUGIN_NAME="Intel SR-IOV"
   PACKAGE="i915-sriov"
-  DL_URL="https://github.com/ich777/unraid-i915-sriov/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
-  LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-i915-sriov/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+  DL_URL="https://github.com/giganode/unraid-i915-sriov/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
+  LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/giganode/unraid-i915-sriov/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   if [ -z "${LAT_PACKAGE}" ]; then
     sleep 2
-    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-i915-sriov/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/giganode/unraid-i915-sriov/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
   fi
   mkdir -p "/boot/config/plugins/i915-sriov/packages/${NEW_KERNEL_V%%-*}"
   if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/i915-sriov/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
