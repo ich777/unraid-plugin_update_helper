@@ -5,7 +5,7 @@ if [ ! -f /boot/changes.txt ]; then
   exit 1
 fi
 
-echo "Force Plugin Updates script version: 2024.02.19 by ich777"
+echo "Force Plugin Updates script version: 2024.06.13 by ich777"
 echo
 echo "Please don't close this window until it says finished!"
 
@@ -426,6 +426,33 @@ if [ -f "/boot/config/plugins/unraid-r8125.plg" ]; then
   else
     /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
     rm -rf /boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
+    ERROR+="${PLUGIN_NAME}, "
+  fi
+fi
+
+if [ -f "/boot/config/plugins/unraid-r8126.plg" ]; then
+  PLUGIN_NAME="RTL8126"
+  PACKAGE="r8126"
+  DL_URL="https://github.com/jinlife/unraid-r8125-r8152-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
+  LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/jinlife/unraid-r8125-r8152-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+  if [ -z "${LAT_PACKAGE}" ]; then
+    sleep 2
+    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/jinlife/unraid-r8125-r8152-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+  fi
+  mkdir -p "/boot/config/plugins/r8126-driver/packages/${NEW_KERNEL_V%%-*}"
+  if wget -q --show-progress --progress=bar:force:noscroll -F -O "/boot/config/plugins/r8126-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" ; then
+    wget -q -F -O "/boot/config/plugins/r8126-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
+    if [ "$(md5sum /boot/config/plugins/r8126-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/r8126-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+      rm -rf /boot/config/plugins/r8126-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
+      ERROR+="${PLUGIN_NAME}, "
+   else
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+      rm -rf $(ls -d /boot/config/plugins/r8126-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
+    fi
+  else
+    /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+    rm -rf /boot/config/plugins/r8126-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
     ERROR+="${PLUGIN_NAME}, "
   fi
 fi
