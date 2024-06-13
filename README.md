@@ -15,7 +15,7 @@
 - QNAP-EC: https://github.com/ich777/unraid-qnapec
 - NCT6687: https://github.com/ich777/unraid-nct6687-driver
 - IT87: https://github.com/ich777/unraid-it87-driver
-- R8125, R8152 and R8168: https://github.com/jinlife/unraid-r8125-r8152-driver
+- R8125, R8126, R8152 and R8168: https://github.com/jinlife/unraid-r8125-r8152-driver
 - Intel Graphics SR-IOV: https://github.com/giganode/unraid-i915-sriov
 - asustor Platfrom Drivers: https://github.com/Terebi42/unraid-asustor-pfd
 
