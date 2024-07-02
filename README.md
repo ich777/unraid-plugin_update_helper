@@ -19,6 +19,7 @@
 - Intel Graphics SR-IOV: https://github.com/giganode/unraid-i915-sriov
 - asustor Platfrom Drivers: https://github.com/Terebi42/unraid-asustor-pfd
 - UGREEN LED Driver: https://github.com/ich777/unraid-ugreenleds-driver
+- Intel GNA Driver: https://github.com/ich777/unraid-intel-gna-driver
 
 _**If you got any suggestions or issues feel free to create a Github Issue here or contact me on the unRAID Forums.**_
 
