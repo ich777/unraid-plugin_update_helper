@@ -687,6 +687,7 @@ do
       PACKAGE="$(grep "${DRV_V}" <<< "${PACKAGES}")"
       if [ -z "${PACKAGE}" ]; then
         PACKAGE="$(echo "${PACKAGES}" | sort -V | tail -1)"
+        sed -i '/driver_version=/c\driver_version=latest' /boot/config/plugins/hailort-driver/settings.cfg
       fi
     fi
     if wget -q -nc -O "/boot/config/plugins/hailort-driver/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}" "${DL_URL}/${PACKAGE}" 2>/dev/null ; then
