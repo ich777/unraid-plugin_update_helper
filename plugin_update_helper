@@ -1,5 +1,5 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2024.07.03
+# Plugin-Update-Helper version: 2024.07.15
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
@@ -10,7 +10,6 @@
 # DVB-Driver: https://github.com/ich777/unraid-dvb-driver
 # Nvidia-Driver: https://github.com/ich777/unraid-nvidia-driver
 # USB Manager USBIP Addon: https://github.com/SimonFair/USB_Manager_USBIP_addon
-# USB Manager Serial Addon: https://github.com/SimonFair/USB_Manager_Serial_Options_addon
 # Unraid OpenRGB Patch: https://github.com/ich777/unraid-openrgb-patch
 # QNAP-EC: https://github.com/ich777/unraid-qnapec
 # NCT6687: https://github.com/ich777/unraid-nct6687-driver
@@ -315,33 +314,6 @@ do
     else
       /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} ${OS}v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
-	  ERROR+="${PLUGIN_NAME}, "
-    fi
-  fi
-
-  if [ -f "/boot/config/plugins/usb_manager_serial_options_addon.plg" ]; then
-    PLUGIN_NAME="USB Manager Serial Addon"
-    PACKAGE="usbserial"
-    DL_URL="https://github.com/SimonFair/USB_Manager_Serial_Options_addon/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
-    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/SimonFair/USB_Manager_Serial_Options_addon/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
-    if [ -z "${LAT_PACKAGE}" ]; then
-      sleep 2
-      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/SimonFair/USB_Manager_Serial_Options_addon/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
-    fi
-    mkdir -p "/boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}"
-    if wget -q -nc -O "/boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
-      wget -q -nc -O "/boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
-      if [ "$(md5sum /boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
-        rm -rf /boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
-        ERROR+="${PLUGIN_NAME}, "
-      else
-              /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
-              rm -rf $(ls -d /boot/config/plugins/Usb_manager_serial_options_addon/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
-      fi
-    else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
-      rm -rf /boot/config/plugins/Usb_manager_serial_options_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
   fi
