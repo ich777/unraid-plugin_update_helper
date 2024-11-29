@@ -26,3 +26,11 @@ _**If you got any suggestions or issues feel free to create a Github Issue here 
   
 #### If you experincing any issues or a plugin download failed you can force a plugin update for all packages for the new Unraid version before rebooting by opening a unRAID Terminal and issuing this command:  
 ```wget -qO- https://raw.githubusercontent.com/ich777/unraid-plugin_update_helper/master/force_package_update | bash```
+
+---
+
+### Update Notifications:
+![](images/screenshot.png)
+
+### Upgrade process and Plugin Update Helper in action:
+![](images/update.gif)
