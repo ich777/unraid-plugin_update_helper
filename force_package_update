@@ -5,7 +5,7 @@ if [ ! -f /boot/changes.txt ]; then
   exit 1
 fi
 
-echo "Force Plugin Updates script version: 2024.07.15 by ich777"
+echo "Force Plugin Updates script version: 2025.01.30 by ich777"
 echo
 echo "Please don't close this window until it says finished!"
 
@@ -169,17 +169,17 @@ if [ -f "/boot/config/plugins/nvidia-driver.plg" ]; then
   if [ "${SET_DRV_V}" == "latest_nos" ]; then
     PACKAGE="nvos"
     OS="Open Source "
-    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep -E -v '\.md5$' | grep "${PACKAGE}" | sort -V | tail -1)"
+    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/unraid/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep -E -v '\.md5$' | grep "${PACKAGE}" | sort -V | tail -1)"
   else
     PACKAGE="nvidia"
-    DRIVER_AVAIL="$(wget -qO- https://api.github.com/repos/ich777/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V)"
+    DRIVER_AVAIL="$(wget -qO- https://api.github.com/repos/unraid/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V)"
     if [ -z "${DRIVER_AVAIL}" ]; then
       sleep 2
-      DRIVER_AVAIL="$(wget -qO- https://api.github.com/repos/ich777/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V)"
+      DRIVER_AVAIL="$(wget -qO- https://api.github.com/repos/unraid/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V)"
     fi
     BRANCHES="$(wget -qO- https://raw.githubusercontent.com/ich777/versions/master/nvidia_versions | grep -v "UPDATED")"
   fi
-  DL_URL="https://github.com/ich777/unraid-nvidia-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
+  DL_URL="https://github.com/unraid/unraid-nvidia-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
 
    if [ "${SET_DRV_V}" == "latest" ]; then
     LAT_PACKAGE="$(echo "$DRIVER_AVAIL" | tail -1)"
@@ -203,7 +203,7 @@ if [ -f "/boot/config/plugins/nvidia-driver.plg" ]; then
     if [ -z "${LAT_PACKAGE}" ]; then
       PACKAGE="nvidia"
       unset OS
-      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/unraid/unraid-nvidia-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
       sed -i '/driver_version=/c\driver_version=latest' "/boot/config/plugins/nvidia-driver/settings.cfg"
     fi
   else
