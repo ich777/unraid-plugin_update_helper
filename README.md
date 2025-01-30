@@ -8,7 +8,7 @@
 - HPSAHBA-Patch: https://github.com/ich777/unraid-hpsahba
 - Sound-Driver: https://github.com/ich777/unraid-sound-driver
 - DVB-Driver: https://github.com/ich777/unraid-dvb-driver
-- Nvidia-Driver: https://github.com/ich777/unraid-nvidia-driver
+- Nvidia-Driver: https://github.com/unraid/unraid-nvidia-driver
 - USB Manager USBIP Addon: https://github.com/SimonFair/USB_Manager_USBIP_addon
 - Unraid OpenRGB Patch: https://github.com/ich777/unraid-openrgb-patch
 - QNAP-EC: https://github.com/ich777/unraid-qnapec
