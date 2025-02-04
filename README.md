@@ -4,10 +4,10 @@
 ## Currently supported Plugins:
 - AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
 - CoreFreq: https://github.com/ich777/unraid-corefreq
-- Coral-Driver: https://github.com/ich777/unraid-coral-driver
+- Coral-Driver: https://github.com/unraid/unraid-coral-driver
 - HPSAHBA-Patch: https://github.com/ich777/unraid-hpsahba
 - Sound-Driver: https://github.com/ich777/unraid-sound-driver
-- DVB-Driver: https://github.com/ich777/unraid-dvb-driver
+- DVB-Driver: https://github.com/unraid/unraid-dvb-driver
 - Nvidia-Driver: https://github.com/unraid/unraid-nvidia-driver
 - USB Manager USBIP Addon: https://github.com/SimonFair/USB_Manager_USBIP_addon
 - Unraid OpenRGB Patch: https://github.com/ich777/unraid-openrgb-patch
