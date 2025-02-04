@@ -1,13 +1,13 @@
 # Plugin Update Helper by ich777 for unRAID
-# Plugin-Update-Helper version: 2025.01.30
+# Plugin-Update-Helper version: 2025.02.04
 #
 # Currently supported Plugins:
 # AMD-Vendor-Reset: https://github.com/ich777/unraid-amd-vendor-reset
 # CoreFreq: https://github.com/ich777/unraid-corefreq
-# Coral-Driver: https://github.com/ich777/unraid-coral-driver
+# Coral-Driver: https://github.com/unraid/unraid-coral-driver
 # HPSAHBA-Patch: https://github.com/ich777/unraid-hpsahba
 # Sound-Driver: https://github.com/ich777/unraid-sound-driver
-# DVB-Driver: https://github.com/ich777/unraid-dvb-driver
+# DVB-Driver: https://github.com/unraid/unraid-dvb-driver
 # Nvidia-Driver: https://github.com/unraid/unraid-nvidia-driver
 # USB Manager USBIP Addon: https://github.com/SimonFair/USB_Manager_USBIP_addon
 # Unraid OpenRGB Patch: https://github.com/ich777/unraid-openrgb-patch
@@ -134,11 +134,11 @@ do
   if [ -f "/boot/config/plugins/coral-driver.plg" ]; then
     PLUGIN_NAME="Coral-Driver"
     PACKAGE="Coral"
-    DL_URL="https://github.com/ich777/unraid-coral-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
-    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-coral-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    DL_URL="https://github.com/unraid/unraid-coral-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
+    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/unraid/unraid-coral-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
     if [ -z "${LAT_PACKAGE}" ]; then
       sleep 2
-      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-coral-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/unraid/unraid-coral-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
     fi
     mkdir -p "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
@@ -215,11 +215,11 @@ do
   if [ -f "/boot/config/plugins/dvb-driver.plg" ]; then
     PLUGIN_NAME="DVB Driver"
     PACKAGE="$(grep "dvb_package" "/boot/config/plugins/dvb-driver/settings.cfg" | cut -d '=' -f2)"
-    DL_URL="https://github.com/ich777/unraid-dvb-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
-    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-dvb-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+    DL_URL="https://github.com/unraid/unraid-dvb-driver/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
+    LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/unraid/unraid-dvb-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
     if [ -z "${LAT_PACKAGE}" ]; then
       sleep 2
-      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-dvb-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
+      LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/unraid/unraid-dvb-driver/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
     fi
     mkdir -p "/boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}"
     if wget -q -nc -O "/boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
