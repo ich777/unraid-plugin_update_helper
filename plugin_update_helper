@@ -21,7 +21,7 @@
 # Hailo RT Driver: https://github.com/ich777/unraid-hailort-driver
 
 if [ ! -f /boot/changes.txt ]; then
-  /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Error: Plugin Update Helper can't start! Can't find file /boot/changes.txt" -i "alert"
+  /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "Error: Plugin Update Helper can't start! Can't find file /boot/changes.txt" -i "alert"
   exit 1
 fi
 while inotifywait -q /boot/changes.txt -e move_self,delete_self,modify >/dev/null 2>&1
@@ -30,7 +30,7 @@ do
   retries=0
   while [ ! -f /boot/changes.txt ]; do
     if [ ${retries} -ge 4 ]; then
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Error: Timed out waiting for /boot/changes.txt!"  -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "Error: Timed out waiting for /boot/changes.txt!"  -i "alert"
       exit 1
     fi
     sleep 2
@@ -51,19 +51,19 @@ do
     NEW_KERNEL_V="$(grep -E -A2 "Linux kernel" /boot/changes.txt | grep -E "Unraid" | awk '{print $3}' | grep "^[0-9]" | sort -V | tail -1)"
   fi
   if [ -z "${NEW_KERNEL_V%%-*}" ]; then
-    /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Something went horrybly wrong, can't fetch new unRAID Kernel version, please reboot your Server and make sure that you have a active Internet connection on boot without any AdBlocking softwar infront of it!"  -i "alert"
+    /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "Something went horrybly wrong, can't fetch new unRAID Kernel version, please reboot your Server and make sure that you have a active Internet connection on boot without any AdBlocking softwar infront of it!"  -i "alert"
     exit 1
   fi
   NEW_UNRAID_V="$(head -2 /boot/changes.txt | grep -E "Version" | awk '{print $3}' | sort -V | tail -1)"
 
   # Check if Kernel version changed, notify user if so
   if [ "${CUR_KERNEL_V%%-*}" == "${NEW_KERNEL_V%%-*}" ]; then
-    /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "All plugins are up-to-date for unRAID v${NEW_UNRAID_V}, please reboot!"
+    /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "All plugins are up-to-date for unRAID v${NEW_UNRAID_V}, please reboot!"
     exit 0
   elif [ -z "${NEW_KERNEL_V%%-*}" ]; then
     exit 1
   else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "unRAID version change detected, please don't reboot just yet! Download from plugin(s) for new unRAID v${NEW_UNRAID_V} started in background! You will be notified when the download(s) is/are finished!"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "unRAID version change detected, please don't reboot just yet! Download from plugin(s) for new unRAID v${NEW_UNRAID_V} started in background! You will be notified when the download(s) is/are finished!"
   fi
 
   if [ -f "/boot/config/plugins/amd-vendor-reset.plg" ]; then
@@ -79,15 +79,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/amd-vendor-reset/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/amd-vendor-reset/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -109,22 +109,22 @@ do
       LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/ich777/unraid-corefreq/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
     fi
     if [ -z "${LAT_PACKAGE}" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} Error: Can't get latest version!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} Error: Can't get latest version!" -i "alert"
     else
       mkdir -p "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}"
       if wget -q -nc -O "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
         wget -q -nc -O "/boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
         if [ "$(md5sum /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-          /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed: Checksum Error!" -i "alert"
+          /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed: Checksum Error!" -i "alert"
           rm -rf /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
           ERROR+="${PLUGIN_NAME}, "
         else
-          /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} v$(echo $LAT_PACKAGE | cut -d '-' -f2) download successful!"
+          /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} v$(echo $LAT_PACKAGE | cut -d '-' -f2) download successful!"
           rm -rf $(ls -d /boot/config/plugins/corefreq/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
           rm -rf $(find /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/ -type f -maxdepth 1 | grep -v "${LAT_PACKAGE}")
         fi
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
         rm -rf /boot/config/plugins/corefreq/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       fi
@@ -144,15 +144,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/coral-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/coral-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -171,15 +171,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/hpsahba/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/hpsahba/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -198,15 +198,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/sound-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/sound-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -225,16 +225,16 @@ do
     if wget -q -nc -O "/boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} '${PACKAGE}' download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} '${PACKAGE}' download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} '${PACKAGE}' download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} '${PACKAGE}' download successful!"
         rm -rf $(ls -d /boot/config/plugins/dvb-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
         rm -rf $(find /boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/ -type f -maxdepth 1 | grep -v "${PACKAGE}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} '${PACKAGE}' download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} '${PACKAGE}' download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/dvb-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -269,7 +269,7 @@ do
         sed -i '/driver_version=/c\driver_version=latest' "/boot/config/plugins/nvidia-driver/settings.cfg"
       fi
     elif [ "${SET_DRV_V}" == "latest_nfb" ]; then
-      LAT_NFB_AVAIL="$(echo "$BRANCHES" | grep 'NFB' | cut -d '=' -f2 | sort -V)"      
+      LAT_NFB_AVAIL="$(echo "$BRANCHES" | grep 'NFB' | cut -d '=' -f2 | sort -V)"
       LAT_PACKAGE="$(comm -12 <(echo "$DRIVER_AVAIL" | cut -d '-' -f2 | awk -F '.' '{printf "%d.%03d.%d\n", $1,$2,$3}' | awk -F '.' '{printf "%d.%03d.%02d\n", $1,$2,$3}') <(echo "$LAT_NFB_AVAIL" | awk -F '.' '{printf "%d.%03d.%d\n", $1,$2,$3}' | awk -F '.' '{printf "%d.%03d.%02d\n", $1,$2,$3}') | sort -V | tail -1 | awk -F '.' '{printf "%d.%02d.%02d\n", $1,$2,$3}' | awk '{sub(/\.0+$/,"")}1')"
       LAT_PACKAGE="$(echo "$DRIVER_AVAIL" | grep "$LAT_PACKAGE")"
     if [ -z "${LAT_PACKAGE}" ]; then
@@ -303,16 +303,16 @@ do
     if wget -q -nc -O "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} ${OS}v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} ${OS}v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} ${OS}v$(echo $LAT_PACKAGE | cut -d '-' -f2) download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} ${OS}v$(echo $LAT_PACKAGE | cut -d '-' -f2) download successful!"
         rm -rf $(ls -d /boot/config/plugins/nvidia-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
         rm -rf $(find /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/ -type f -maxdepth 1 | grep -v "${PACKAGE}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} ${OS}v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} ${OS}v$(echo $LAT_PACKAGE | cut -d '-' -f2) download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/nvidia-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -320,7 +320,7 @@ do
 
   if [ -f "/boot/config/plugins/usb_manager_usbip_addon.plg" ]; then
     PLUGIN_NAME="USB Manager USBIP Addon"
-    PACKAGE="usbip"	
+    PACKAGE="usbip"
     DL_URL="https://github.com/SimonFair/USB_Manager_USBIP_addon/releases/download/${NEW_KERNEL_V%%-*}-Unraid"
     LAT_PACKAGE="$(wget -qO- https://api.github.com/repos/SimonFair/USB_Manager_USBIP_addon/releases/tags/${NEW_KERNEL_V%%-*}-Unraid | jq -r '.assets[].name' | grep "${PACKAGE}" | grep -E -v '\.md5$' | sort -V | tail -1)"
     if [ -z "${LAT_PACKAGE}" ]; then
@@ -331,15 +331,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-          /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+          /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
           rm -rf $(ls -d /boot/config/plugins/Usb_manager_usbip_addon/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/Usb_manager_usbip_addon/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -358,15 +358,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/openrgb-patch/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/openrgb-patch/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -385,15 +385,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/qnap-ec/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/qnap-ec/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -412,15 +412,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/nct6687-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/nct6687-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -439,15 +439,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/it87-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/it87-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/it87-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/it87-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/it87-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/it87-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/it87-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -466,15 +466,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
      else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/r8125-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/r8125-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -493,15 +493,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/r8126-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/r8126-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/r8126-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/r8126-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/r8126-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
      else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/r8126-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/r8126-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -520,15 +520,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/r8152-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/r8152-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/r8152-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/r8152-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/r8152-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/r8152-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/r8152-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -547,15 +547,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/r8168-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/r8168-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/r8168-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/r8168-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/r8168-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/r8168-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/r8168-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -574,15 +574,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/i915-sriov/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/i915-sriov/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/i915-sriov/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/i915-sriov/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/i915-sriov/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/i915-sriov/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/i915-sriov/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -601,15 +601,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/asustorpfd/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/asustorpfd/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/asustorpfd/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/asustorpfd/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/asustorpfd/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/asustorpfd/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/asustorpfd/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -628,15 +628,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/ugreenleds-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}" "${DL_URL}/${LAT_PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/ugreenleds-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5" "${DL_URL}/${LAT_PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/ugreenleds-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/ugreenleds-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/ugreenleds-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/ugreenleds-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/ugreenleds-driver/packages/${NEW_KERNEL_V%%-*}/${LAT_PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -665,15 +665,15 @@ do
     if wget -q -nc -O "/boot/config/plugins/hailort-driver/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}" "${DL_URL}/${PACKAGE}" 2>/dev/null ; then
       wget -q -nc -O "/boot/config/plugins/hailort-driver/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}.md5" "${DL_URL}/${PACKAGE}.md5"
       if [ "$(md5sum /boot/config/plugins/hailort-driver/packages/${NEW_KERNEL_V%%-*}/${PACKAGE} | awk '{print $1}')" != "$(cat /boot/config/plugins/hailort-driver/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}.md5 | awk '{print $1}')" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed: Checksum Error!" -i "alert"
         rm -rf /boot/config/plugins/hailort-driver/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}*
         ERROR+="${PLUGIN_NAME}, "
       else
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download successful!"
         rm -rf $(ls -d /boot/config/plugins/hailort-driver/packages/* | grep -v "${NEW_KERNEL_V%%-*}")
       fi
     else
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "${PLUGIN_NAME} download failed, please go to the support thread for this plugin and make a post with a screenshot from this error!" -i "alert"
       rm -rf /boot/config/plugins/hailort-driver/packages/${NEW_KERNEL_V%%-*}/${PACKAGE}*
 	  ERROR+="${PLUGIN_NAME}, "
     fi
@@ -681,9 +681,9 @@ do
 
   sleep 2
   if [ -z "${ERROR}" ]; then
-    /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Everything done, please reboot to install unRAID v${NEW_UNRAID_V}!" -l "Main"
+    /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "Everything done, please reboot to install unRAID v${NEW_UNRAID_V}!" -l "Main"
   else
-    /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -d "Download from plugin package(s): ${ERROR%,*} for unRAID v${NEW_UNRAID_V} failed! Please visit the support thread(s) before rebooting to avoid plugin issues!" -l "https://forums.unraid.net" -i "alert"
+    /usr/local/emhttp/plugins/dynamix/scripts/notify -e "Plugin Update Helper" -s "Plugin Update Helper" -d "Download from plugin package(s): ${ERROR%,*} for unRAID v${NEW_UNRAID_V} failed! Please visit the support thread(s) before rebooting to avoid plugin issues!" -l "https://forums.unraid.net" -i "alert"
   fi
   sleep 2
   exit 0
