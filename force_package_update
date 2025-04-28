@@ -5,7 +5,7 @@ if [ ! -f /boot/changes.txt ]; then
   exit 1
 fi
 
-echo "Force Plugin Updates script version: 2025.03.25 by ich777"
+echo "Force Plugin Updates script version: 2025.04.28 by ich777"
 echo
 echo "Please don't close this window until it says finished!"
 
