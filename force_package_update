@@ -5,7 +5,7 @@ if [ ! -f /boot/changes.txt ]; then
   exit 1
 fi
 
-echo "Force Plugin Updates script version: 2026.05.01 by ich777"
+echo "Force Plugin Updates script version: 2026.05.04 by ich777"
 echo
 echo "Please don't close this window until it says finished!"
 
@@ -208,7 +208,7 @@ if [ -f "/boot/config/plugins/nvidia-driver.plg" ]; then
     fi
   else
     if [[ "${SET_DRV_V}" = 58* ]]; then
-      LAT_PACKAGE="$(echo "$DRIVER_AVAIL" | grep "\-58*" | sort -V | tail -1)"
+      LAT_PACKAGE="$(echo "$DRIVER_AVAIL" | grep -F -- "-58" | sort -V | tail -1)"
       if [ -z "${LAT_PACKAGE}" ]; then
         LAT_PACKAGE="$(echo "$DRIVER_AVAIL" | grep "$SET_DRV_V")"
       else
